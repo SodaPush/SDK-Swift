@@ -44,6 +44,16 @@ final class SodaPushTests: XCTestCase {
             )
         }
         let client = makeClient(installationID: installationID)
+        await client.updateContext(.init(
+            platform: "test",
+            appVersion: "1.2.3",
+            appBuild: "45",
+            locale: "en_US",
+            language: "en",
+            timeZone: "America/Los_Angeles",
+            userID: "customer-42",
+            tags: ["paid", "beta", "paid"]
+        ))
 
         let registration = try await client.updateDeviceToken(Data([0x00, 0xab, 0xff]))
 
@@ -60,6 +70,9 @@ final class SodaPushTests: XCTestCase {
         XCTAssertEqual(json["environment"] as? String, "production")
         let context = try XCTUnwrap(json["context"] as? [String: Any])
         XCTAssertEqual(context["platform"] as? String, "test")
+        XCTAssertEqual(context["language"] as? String, "en")
+        XCTAssertEqual(context["userID"] as? String, "customer-42")
+        XCTAssertEqual(context["tags"] as? [String], ["beta", "paid"])
         assertValidSignature(request, canonicalTarget: request.url!.path, body: body)
     }
 

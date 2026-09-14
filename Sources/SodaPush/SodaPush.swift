@@ -43,7 +43,10 @@ public struct SodaPushDeviceContext: Codable, Sendable, Equatable {
     public var appVersion: String?
     public var appBuild: String?
     public var locale: String?
+    public var language: String?
     public var timeZone: String?
+    public var userID: String?
+    public var tags: [String]
 
     public static var currentPlatform: String {
         #if os(iOS)
@@ -63,16 +66,26 @@ public struct SodaPushDeviceContext: Codable, Sendable, Equatable {
 
     public init(
         platform: String = SodaPushDeviceContext.currentPlatform,
-        appVersion: String? = nil,
-        appBuild: String? = nil,
-        locale: String? = nil,
-        timeZone: String? = nil
+        appVersion: String? = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String,
+        appBuild: String? = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String,
+        locale: String? = Locale.current.identifier,
+        language: String? = Locale.preferredLanguages.first,
+        timeZone: String? = TimeZone.current.identifier,
+        userID: String? = nil,
+        tags: [String] = []
     ) {
         self.platform = platform
         self.appVersion = appVersion
         self.appBuild = appBuild
         self.locale = locale
+        self.language = language
         self.timeZone = timeZone
+        self.userID = userID
+        self.tags = Self.normalizedTags(tags)
+    }
+
+    private static func normalizedTags(_ tags: [String]) -> [String] {
+        Array(Set(tags.lazy.map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }.filter { !$0.isEmpty })).sorted()
     }
 }
 
@@ -139,6 +152,17 @@ public actor SodaPushClient {
 
     public func updateContext(_ context: SodaPushDeviceContext) {
         self.context = context
+    }
+
+    /// Replaces the custom targeting tags included in the next device registration.
+    public func updateTags(_ tags: [String]) {
+        context.tags = Array(Set(tags.lazy.map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }.filter { !$0.isEmpty })).sorted()
+    }
+
+    /// Associates this installation with an application-defined user identifier.
+    public func updateUserID(_ userID: String?) {
+        let normalized = userID?.trimmingCharacters(in: .whitespacesAndNewlines)
+        context.userID = normalized?.isEmpty == false ? normalized : nil
     }
 
     @discardableResult
