@@ -1,0 +1,23 @@
+{
+  "originHash" : "c217ba7ac2512269d1416a6e275fa16d9c846c9ae343e1ed2102d209a890869c",
+  "pins" : [
+    {
+      "identity" : "runtimesecretmacro",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/guoPhineas/RuntimeSecretMacro.git",
+      "state" : {
+        "revision" : "d6e7b92557bab0f08e9b231e1c9a0e82364de7b4"
+      }
+    },
+    {
+      "identity" : "swift-syntax",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/swiftlang/swift-syntax.git",
+      "state" : {
+        "revision" : "b90056de69eed23b3fb39ab69cf1780071dfb664",
+        "version" : "604.0.0-prerelease-2026-06-05"
+      }
+    }
+  ],
+  "version" : 3
+}
