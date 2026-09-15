@@ -14,7 +14,7 @@ import Security
 public enum SodaPushEnvironment: String, Codable, Sendable {
     case development
     case production
-    static var auto: SodaPushEnvironment {
+    public static var auto: SodaPushEnvironment {
         #if DEBUG
         return .development
         #else
