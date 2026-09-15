@@ -28,7 +28,7 @@ let configuration = SodaPushConfiguration(
     appID: "your-app-id",
     registrationKeyID: #Secret("registration-key-id"),
     registrationSecret: #Secret("registration-secret"),
-    environment: .production
+    environment: .auto // Or .development / .production
 )
 
 let context = SodaPushDeviceContext(

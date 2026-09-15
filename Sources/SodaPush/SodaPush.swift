@@ -14,6 +14,13 @@ import Security
 public enum SodaPushEnvironment: String, Codable, Sendable {
     case development
     case production
+    static var auto: SodaPushEnvironment {
+        #if DEBUG
+        return .development
+        #else
+        return .production
+        #endif
+    }
 }
 
 public struct SodaPushConfiguration: Sendable {
