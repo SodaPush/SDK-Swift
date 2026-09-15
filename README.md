@@ -1,6 +1,6 @@
 # SodaPush Swift SDK
 
-The SodaPush Swift SDK securely registers Apple device tokens with a deployed [SodaPush Server](https://github.com/SodaPush/Server). The operator UI lives in [SodaPush Admin](https://github.com/SodaPush/AdminClient-Swift).
+The SodaPush Swift SDK registers Apple device tokens with an APNs backend you deploy and control. [SodaPush Server](https://github.com/SodaPush/Server) can run on Cloudflare Workers, D1, and Queues within free-plan limits for small workloads; your account owns the device data and credentials. The operator UI lives in [SodaPush Admin](https://github.com/SodaPush/AdminClient-Swift).
 
 ## Requirements
 
@@ -74,6 +74,8 @@ try await notifications.unregister()
 The SDK persists an installation UUID scoped to the normalized server origin, app ID, and APNs environment. An app may pass its own UUID when it already owns a stable installation identity.
 
 Registration and unregistration use HMAC-SHA256 signatures covering the method, canonical target, timestamp, nonce, and request-body hash. Server failures retain their HTTP status, error code, message, and request ID; task cancellation remains `CancellationError`.
+
+Both signed device operations use HTTP POST (`/register` and `/unregister`). The unregister request carries the APNs environment in its JSON body, which is included in the signature.
 
 Registration credentials are necessarily present in the app binary. `#Secret` raises the cost of basic static extraction but is not attestation. Never place an APNs `.p8` key in a client app.
 
