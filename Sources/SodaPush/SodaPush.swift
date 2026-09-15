@@ -189,9 +189,9 @@ public actor SodaPushClient {
             throw SodaPushError.encoding(error.localizedDescription)
         }
 
-        let path = "/v1/apps/\(configuration.appID)/devices/\(installationID.uuidString.lowercased())"
+        let path = "/v1/apps/\(configuration.appID)/devices/\(installationID.uuidString.lowercased())/register"
         var request = URLRequest(url: SodaPushURL.requestURL(origin: serverURL, path: path))
-        request.httpMethod = "PUT"
+        request.httpMethod = "POST"
         request.httpBody = body
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         try sign(&request, canonicalTarget: path, body: body)
@@ -203,12 +203,13 @@ public actor SodaPushClient {
             throw SodaPushError.invalidServerURL
         }
 
-        let path = "/v1/apps/\(configuration.appID)/devices/\(installationID.uuidString.lowercased())"
-        let query = "environment=\(configuration.environment.rawValue)"
-        let canonicalTarget = "\(path)?\(query)"
-        var request = URLRequest(url: SodaPushURL.requestURL(origin: serverURL, path: path, percentEncodedQuery: query))
-        request.httpMethod = "DELETE"
-        try sign(&request, canonicalTarget: canonicalTarget, body: Data())
+        let path = "/v1/apps/\(configuration.appID)/devices/\(installationID.uuidString.lowercased())/unregister"
+        let body = try JSONEncoder().encode(UnregisterRequest(environment: configuration.environment))
+        var request = URLRequest(url: SodaPushURL.requestURL(origin: serverURL, path: path))
+        request.httpMethod = "POST"
+        request.httpBody = body
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        try sign(&request, canonicalTarget: path, body: body)
         _ = try await sendRaw(request)
     }
 
@@ -282,6 +283,10 @@ private struct DeviceRegistrationRequest: Codable, Sendable {
     let deviceToken: String
     let environment: SodaPushEnvironment
     let context: SodaPushDeviceContext
+}
+
+private struct UnregisterRequest: Codable, Sendable {
+    let environment: SodaPushEnvironment
 }
 
 private struct SodaPushServerError: Codable, Sendable {

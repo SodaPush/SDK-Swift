@@ -59,8 +59,8 @@ final class SodaPushTests: XCTestCase {
 
         XCTAssertEqual(registration.installationID, installationID)
         let request = try XCTUnwrap(recorder.requests.first)
-        XCTAssertEqual(request.httpMethod, "PUT")
-        XCTAssertEqual(request.url?.path, "/v1/apps/app-id/devices/d1b28f5a-f77b-44d5-a00a-68b6529e553a")
+        XCTAssertEqual(request.httpMethod, "POST")
+        XCTAssertEqual(request.url?.path, "/v1/apps/app-id/devices/d1b28f5a-f77b-44d5-a00a-68b6529e553a/register")
         XCTAssertNil(request.url?.query)
         XCTAssertEqual(request.value(forHTTPHeaderField: "Content-Type"), "application/json")
 
@@ -76,7 +76,7 @@ final class SodaPushTests: XCTestCase {
         assertValidSignature(request, canonicalTarget: request.url!.path, body: body)
     }
 
-    func testUnregisterIncludesEnvironmentInURLAndSignature() async throws {
+    func testUnregisterIncludesEnvironmentInBodyAndSignature() async throws {
         let recorder = RequestRecorder()
         URLProtocolStub.handler = { request in
             recorder.append(request)
@@ -89,12 +89,17 @@ final class SodaPushTests: XCTestCase {
         try await client.unregister()
 
         let request = try XCTUnwrap(recorder.requests.first)
-        XCTAssertEqual(request.httpMethod, "DELETE")
-        XCTAssertEqual(request.url?.query, "environment=production")
+        XCTAssertEqual(request.httpMethod, "POST")
+        XCTAssertEqual(request.url?.path, "/v1/apps/app-id/devices/d1b28f5a-f77b-44d5-a00a-68b6529e553a/unregister")
+        XCTAssertNil(request.url?.query)
+        XCTAssertEqual(request.value(forHTTPHeaderField: "Content-Type"), "application/json")
+        let body = try XCTUnwrap(request.bodyData)
+        let json = try XCTUnwrap(JSONSerialization.jsonObject(with: body) as? [String: String])
+        XCTAssertEqual(json["environment"], "production")
         assertValidSignature(
             request,
-            canonicalTarget: request.url!.path + "?environment=production",
-            body: Data()
+            canonicalTarget: request.url!.path,
+            body: body
         )
     }
 
