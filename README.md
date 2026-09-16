@@ -4,7 +4,7 @@ The SodaPush Swift SDK registers Apple device tokens with an APNs backend you de
 
 > [!WARNING]
 >
-> Please use SodaPush reasonably. SodaPush project are only provided as tools, and SodaPush itself is not a service provider. We are not responsible for the information sent or the behavior of the users.
+> Please use SodaPush reasonably. SodaPush project is only provided as tools, and SodaPush itself is not a service provider. We are not responsible for the information sent or the behavior of the users.
 
 ## Requirements
 
