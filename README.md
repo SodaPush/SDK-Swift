@@ -2,6 +2,10 @@
 
 The SodaPush Swift SDK registers Apple device tokens with an APNs backend you deploy and control. [SodaPush Server](https://github.com/SodaPush/Server) can run on Cloudflare Workers, D1, and Queues within free-plan limits for small workloads; your account owns the device data and credentials. The operator UI lives in [SodaPush Admin](https://github.com/SodaPush/AdminClient-Swift).
 
+> [!WARNING]
+>
+> Please use SodaPush reasonably. SodaPush project are only provided as tools, and SodaPush itself is not a service provider. We are not responsible for the information sent or the behavior of the users.
+
 ## Requirements
 
 - Swift 6 and Swift Package Manager
